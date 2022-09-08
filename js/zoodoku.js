@@ -1,66 +1,5 @@
 let board;
 
-
-// let board = [
-//         [0,0,3,0,2,0,6,0,0],
-//         [9,0,0,3,0,5,0,0,1],
-//         [0,0,1,8,0,6,4,0,0],
-//         [0,0,8,1,0,2,9,0,0],
-//         [7,0,0,0,0,0,0,0,8],
-//         [0,0,6,7,0,8,2,0,0],
-//         [0,0,2,6,0,9,5,0,0],
-//         [8,0,0,2,0,3,0,0,9],
-//         [0,0,5,0,1,0,3,0,0]];
-
-
-// let board = [
-// [3,0,0,2,0,0,0,0,0],
-// [0,0,0,1,0,7,0,0,0],
-// [7,0,6,0,3,0,5,0,0],
-// [0,7,0,0,0,9,0,8,0],
-// [9,0,0,0,2,0,0,0,4],
-// [0,1,0,8,0,0,0,5,0],
-// [0,0,9,0,4,0,3,0,1],
-// [0,0,0,7,0,2,0,0,0],
-// [0,0,0,0,0,8,0,0,6]];
-
-// let board = [
-//     [0,0,8,7,0,3,0,2,0],
-//     [0,0,1,9,8,6,0,0,0],
-//     [0,0,6,0,0,0,0,0,8],
-//     [7,0,0,0,0,0,4,0,2],
-//     [0,6,0,0,4,0,0,0,1],
-//     [0,1,2,0,0,5,0,0,0],
-//     [9,0,4,0,3,1,0,0,6],
-//     [6,0,0,2,0,7,0,4,0],
-//     [1,0,0,0,6,9,0,0,5]
-// ];
-
-// let board = [
-//     [3,0,7,0,0,1,0,0,0],
-//     [2,0,0,9,0,0,0,1,5],
-//     [0,0,0,0,0,2,0,9,3],
-//     [5,4,8,2,0,0,0,7,0],
-//     [0,0,0,0,0,6,0,0,0],
-//     [7,0,2,0,9,0,0,0,0],
-//     [0,0,0,6,5,0,0,0,0],
-//     [0,0,6,3,0,0,8,4,2],
-//     [8,0,0,1,0,0,5,0,0]
-// ];
-
-
-// let board = [
-//     [1,0,0,0,0,5,0,0,8],
-//     [0,4,0,0,9,0,0,0,0],
-//     [0,0,0,1,0,0,4,6,3],
-//     [2,0,8,0,1,0,0,0,6],
-//     [7,0,0,0,0,4,3,5,0],
-//     [0,0,0,0,3,0,0,0,0],
-//     [0,0,1,0,0,0,0,0,4],
-//     [0,8,0,0,0,0,6,0,0],
-//     [4,0,0,0,0,6,1,9,2]
-// ];
-
 const initBoard = () => {
 
     board = [[0,0,0,0],
@@ -99,7 +38,6 @@ const disableTapZoom = () => {
     const preventDefault = (e) => e.preventDefault();
     document.body.addEventListener('touchstart', preventDefault, {passive: false});
     document.body.addEventListener('mousedown', preventDefault, {passive: false});
-
 }
 
 const shuffle = (array) => {
@@ -199,7 +137,7 @@ const cols = (board) => {
     return [null, null, null, null];
 }
 
-const squares = (board) => {
+const boxes = (board) => {
 
     for (let sq = 0; sq < 4; sq++) {
         outer: for (let val = 1; val <= 4; val++) {
@@ -257,7 +195,7 @@ const solve = (board) => {
 
     let row, col, val, num;
 
-    [row, col, val, num] = squares(board);
+    [row, col, val, num] = boxes(board);
     if (row != undefined) return [row, col, val, num];
 
     [row, col, val, num] = rows(board);
@@ -322,34 +260,65 @@ const save = () => {
     }
 }
 
+const diffrent4 = (board) => {
+
+    let clues = [1, 2, 3, 4];
+
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+
+            if (board[i][j] == 0) continue;
+
+            let index = clues.indexOf(board[i][j]);
+
+            if (index == -1) return false;
+
+            clues.splice(index, 1); 
+        }    
+    }
+
+    return true;
+}
+
 const remove = () => {
 
+    let tempBoard;
     let cells = Array.from({length: 16}, (_, i) => i);
 
     // console.log(cells);
 
-    cells = shuffle(cells);
+    do {
+         
+        tempBoard = board.map(arr => arr.slice());
 
-    // for (let i = 0; i < 16; i++) {
-    for (let cell of cells) {
+        cells = shuffle(cells);
+
+        // for (let i = 0; i < 16; i++) {
+        for (let cell of cells) {
 
 
-        // let cell = cells[i];
-        let row = Math.floor(cell / 4);
-        let col = cell % 4;
-        let val = board[row][col];
+            // let cell = cells[i];
+            let row = Math.floor(cell / 4);
+            let col = cell % 4;
+            let val = board[row][col];
 
-        // if (count(board) == 28) break;
-        
-        board[row][col] = 0;
+            // if (count(board) == 28) break;
+            
+            tempBoard[row][col] = 0;
 
-        if (solvable()) continue;
+            if (solvable(tempBoard)) continue;
 
-        board[row][col] = val;
-    }
+            tempBoard[row][col] = val;
+        }
+
+        console.log(diffrent4(tempBoard));
+
+    } while(!diffrent4(tempBoard));
+
+    board = tempBoard;
 }
 
-const solvable = (steps = false) => {
+const solvable = (board, steps = false) => {
 
     let tempBoard = board.map(arr => arr.slice());
 
@@ -389,7 +358,6 @@ const fillBoard = () => {
             cell.firstChild.innerText = '';
             // cell.classList.add('green');
         }
-
     });
 }
 
@@ -425,21 +393,17 @@ const checkCol = (row, col, val) => {
     }
     console.log('COL');
 
-
     return true;
 }
 
-const checkSquare = (row, col, val) => {
+const checkBox = (row, col, val) => {
 
     let boxRow = Math.floor(row / 2) * 2;
     let boxCol = Math.floor(col / 2) * 2;
 
     console.log(' ');
 
-
-
     for (let i = 0; i < 4; i++) {
-
 
         let r = boxRow + Math.floor(i / 2);
         let c = boxCol + Math.floor(i % 2);
@@ -453,14 +417,12 @@ const checkSquare = (row, col, val) => {
 
     console.log('SQ');
 
-
     return true;
 }
 
 const checkCell = (row, col, val) => {
 
     console.log(' ');
-
 
     for (i = 1; i <= 4; i++) {
 
@@ -476,10 +438,9 @@ const checkCell = (row, col, val) => {
 
 const logic = (row, col, val) => {
 
-    if (checkRow(row, col, val) || checkCol(row, col, val) || checkSquare(row, col, val) || checkCell(row, col, val)) return true;
+    if (checkRow(row, col, val) || checkCol(row, col, val) || checkBox(row, col, val) || checkCell(row, col, val)) return true;
 
     // if (checkRow(row, col, val)) return true;
-
 
     return false;
 }
@@ -554,7 +515,7 @@ const select = (e) => {
 }
 
 
-const selectAnimal= (e) => {
+const selectAnimal = (e) => {
 
     let animal = parseInt(e.currentTarget.innerText);
     let cells = document.querySelectorAll('.cell');
@@ -646,7 +607,7 @@ const eraser = (e) => {
     }
 }
 
-const enableAnimals = () => {
+const enableSelection = () => {
 
     let animals = document.querySelectorAll('.animal');
 
@@ -743,17 +704,16 @@ const init = () => {
     showBoard();
 
     enableTouch();
-    enableAnimals();
+    enableSelection();
     enableEraser();
 
-    solvable(true);
-
+    solvable(board, true);
 
     console.table(board);
 
-    // console.log(t1 - t0);
-    // console.log(t2 - t1);
-    console.log(count(board));
+    console.log(t1 - t0);
+    console.log(t2 - t1);
+    // console.log(count(board));
 }
 
 window.onload = () => document.fonts.ready.then(() => init());
