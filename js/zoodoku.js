@@ -296,11 +296,10 @@ const remove = () => {
         // for (let i = 0; i < 16; i++) {
         for (let cell of cells) {
 
-
             // let cell = cells[i];
             let row = Math.floor(cell / 4);
             let col = cell % 4;
-            let val = board[row][col];
+            let val = tempBoard[row][col];
 
             // if (count(board) == 28) break;
             

@@ -12,6 +12,14 @@
 :root {
     --board-size: 0.85;
     --color: LightSteelBlue;
+
+    --color1: #d68394;
+    --color5: #e99034;
+    --color6: #f8d548;
+    --color4: #6c7981;
+    --color2: #b7c3c8;
+    --color3: #e3bd9b;
+    --color7: #9b6f4f;
 }
 
 body {
@@ -47,6 +55,46 @@ h1 {
     margin-top: -10px;
     margin-bottom: 8px;
 }
+
+span {
+    background: var(--color);
+    background: -webkit-linear-gradient(left, orange , yellow, green, cyan, blue, violet);
+    background: -o-linear-gradient(right, orange, yellow, green, cyan, blue, violet);
+    background: -moz-linear-gradient(right, orange, yellow, green, cyan, blue, violet);
+    background: linear-gradient(to right, red, orange , gold, green, blue, indigo, violet);
+    background: linear-gradient(to right, var(--color1), var(--color2), var(--color3), var(--color4), var(--color5), var(--color6), var(--color7));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* span:nth-child(1) {
+    color: var(--color1);
+}
+
+span:nth-child(2) {
+    color: var(--color2);
+}
+
+span:nth-child(3) {
+    color: var(--color3);
+}
+
+span:nth-child(4) {
+    color: var(--color4);
+}
+
+span:nth-child(5) {
+    color: var(--color5);
+}
+
+span:nth-child(6) {
+    color: var(--color6);
+}
+
+span:nth-child(7) {
+    color: var(--color7);
+} */
 
 body:hover {
     cursor: default;
@@ -155,7 +203,7 @@ body:hover {
 .board {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    border: 10px solid var(--color);;
+    /* border: 10px solid var(--color); */
     background-color: var(--color);;
     width: calc(var(--board-size) + 1px);
     height: calc(var(--board-size) + 1px);
@@ -164,6 +212,22 @@ body:hover {
     gap: 1px 1px;
     /* padding: 1px; */
     margin: auto;
+
+    border-width: 10px;
+    border-style: solid;
+    border-image: linear-gradient(to bottom right, red, orange , gold, green, blue, indigo,  violet) 1;
+
+    border-image: linear-gradient(to bottom right, var(--color1), var(--color2), var(--color3), var(--color4), var(--color5), var(--color6), var(--color7)) 1;
+
+
+    /* border-image: linear-gradient(to bottom right, red 14%, orange 14%, orange 28%, gold 28%, gold 42%, green 42%, green 56%, cyan, blue, violet) 1; */
+
+    background: -webkit-linear-gradient(left, orange , yellow, green, cyan, blue, violet);
+    background: -o-linear-gradient(right, orange, yellow, green, cyan, blue, violet);
+    background: -moz-linear-gradient(right, orange, yellow, green, cyan, blue, violet);
+    background: linear-gradient(to bottom right, red, orange , gold, green, blue, indigo, violet);
+    background: linear-gradient(to bottom right, var(--color1), var(--color2), var(--color3), var(--color4), var(--color5), var(--color6), var(--color7));
+
 }
 
 .cell {
@@ -197,7 +261,7 @@ body:hover {
 }
 
 .filled {
-    color: var(--color);;
+    color: lightsteelblue;
     transition: color 0.2s ease;
 }
 
@@ -211,10 +275,10 @@ body:hover {
 }
 
 .gray {
-    background-color: #ecf2f7;
+    /* background-color: #ecf2f7; */
     /* background-color: #f5f8fb; */
 
-    /* background-color: whitesmoke; */
+    background-color: whitesmoke;
 }
 
 .digit {
@@ -313,7 +377,8 @@ body:hover {
     }
 
     .board {
-        border: 15px solid var(--color);;
+        /* border: 15px solid var(--color); */
+        border-width: 15px;
         /* width: calc(var(--board-size-big) + 4px); */
         /* height: calc(var(--board-size-big) + 4px); */
         width: calc(var(--board-size-big) + 1px);
