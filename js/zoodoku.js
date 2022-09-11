@@ -1,4 +1,9 @@
 let board;
+let clues = [];
+
+const animals = ['bear','boar','cat','cow','dog','fox','frog','hamster','koala','lion','monkey','mouse','panda','pig','polar-bear','rabbit','raccoon','tiger','wolf'];
+
+// const animals = ['bear','boar','cat','cow','dog','fox','hamster','koala','lion','monkey','mouse','panda','pig','polar-bear','raccoon','tiger','wolf'];
 
 const initBoard = () => {
 
@@ -32,6 +37,15 @@ const setBoardSize = () => {
     }
 
     document.documentElement.style.setProperty('--board-size', boardSize + 'px');
+}
+
+const setClues = () => {
+
+    clues = shuffle(animals).slice(0, 4);
+
+    document.querySelectorAll('.selection .animal').forEach((animal, i) => {
+        animal.src = `images/zoo/${clues[i]}.svg`;
+    });
 }
 
 const disableTapZoom = () => {
@@ -71,7 +85,6 @@ const count = (board) => {
 
     return n;
 }
-
 
 const valid = (board, row, col, val) => {
 
@@ -310,7 +323,7 @@ const remove = () => {
             tempBoard[row][col] = val;
         }
 
-        console.log(diffrent4(tempBoard));
+        // console.log(diffrent4(tempBoard));
 
     } while(!diffrent4(tempBoard));
 
@@ -340,47 +353,69 @@ const solvable = (board, steps = false) => {
 
 // document.querySelector('.time').innerHTML = t2 - t1;
 
+// const fillBoard = () => {
+
+//     let flatBoard = board.flat();
+
+//     console.log(flatBoard);
+
+//     document.querySelectorAll('.cell').forEach(cell => {
+
+//         let val = flatBoard.shift();
+
+//         if (val) {
+//             cell.firstChild.innerText = val;
+//             cell.classList.add('filled');
+//         } else {
+//             cell.firstChild.innerText = '';
+//             // cell.classList.add('green');
+//         }
+//     });
+// }
+
 const fillBoard = () => {
 
     let flatBoard = board.flat();
 
-    console.log(flatBoard);
+    // console.log(flatBoard);
 
     document.querySelectorAll('.cell').forEach(cell => {
 
         let val = flatBoard.shift();
 
         if (val) {
-            cell.firstChild.innerText = val;
-            cell.classList.add('filled');
+
+            console.log(clues[val - 1]);
+
+            cell.firstChild.src = `images/zoo/${clues[val - 1]}.svg`;
+            cell.firstChild.classList.add('filled');
         } else {
-            cell.firstChild.innerText = '';
-            // cell.classList.add('green');
+            // cell.firstChild.innerText = '';
         }
     });
 }
 
 const checkRow = (row, col, val) => {
 
-    console.log(' ');
+    // console.log(' ');
 
     for (let i = 0; i < 4; i++) {
 
         if (i == col || board[row][i] != 0) continue;
 
-        console.log('row: ', row, i, valid(board, row, i, val));
+        // console.log('row: ', row, i, valid(board, row, i, val));
 
         if (valid(board, row, i, val)) return false;
     }
 
-    console.log('ROW');
+    // console.log('ROW');
 
     return true;
 }
 
 const checkCol = (row, col, val) => {
 
-    console.log(' ');
+    // console.log(' ');
 
     for (let i = 0; i < 4; i++) {
 
@@ -390,7 +425,7 @@ const checkCol = (row, col, val) => {
 
         if (valid(board, i, col, val)) return false;
     }
-    console.log('COL');
+    // console.log('COL');
 
     return true;
 }
@@ -400,7 +435,7 @@ const checkBox = (row, col, val) => {
     let boxRow = Math.floor(row / 2) * 2;
     let boxCol = Math.floor(col / 2) * 2;
 
-    console.log(' ');
+    // console.log(' ');
 
     for (let i = 0; i < 4; i++) {
 
@@ -414,14 +449,14 @@ const checkBox = (row, col, val) => {
         if (valid(board, r, c, val)) return false;
     }
 
-    console.log('SQ');
+    // console.log('SQ');
 
     return true;
 }
 
 const checkCell = (row, col, val) => {
 
-    console.log(' ');
+    // console.log(' ');
 
     for (i = 1; i <= 4; i++) {
 
@@ -430,7 +465,7 @@ const checkCell = (row, col, val) => {
         if (valid(board, row, col, val)) return false;
     }
 
-    console.log('CELL');
+    // console.log('CELL');
 
     return true;
 }
@@ -455,16 +490,16 @@ const select = (e) => {
 
     let val = parseInt(cell.dataset.val);
 
-    console.log(row, col, val);
+    // console.log(row, col, val);
 
     // logic(row, col, val) ? cell.classList.add('green') : cell.classList.add('red');
 
-    if (cell.classList.contains('filled')) { 
+    if (cell.firstChild.classList.contains('filled')) { 
         for (let cell of cells) {
             cell.classList.remove('gray');
         }
 
-        document.querySelector('.animals').classList.remove('display');
+        document.querySelector('.selection').classList.remove('display');
         document.querySelector('.eraser').classList.remove('display');
 
         // disableAnimals();
@@ -472,12 +507,16 @@ const select = (e) => {
         return;
     }
 
+    // console.log(cell.classList);
+
     if (cell.classList.contains('gray')) {
         cell.classList.remove('gray');
-        document.querySelector('.animals').classList.remove('display');
+        document.querySelector('.selection').classList.remove('display');
         document.querySelector('.eraser').classList.remove('display');
         // disableAnimals();
         // disableEraser();
+
+        // console.log('GRAY');
 
         return;
     } 
@@ -488,12 +527,12 @@ const select = (e) => {
 
     cell.classList.add('gray');
 
-    document.querySelector('.animals').classList.remove('display');
+    document.querySelector('.selection').classList.remove('display');
     document.querySelector('.eraser').classList.remove('display');
 
-    if (cell.classList.contains('red')) {
+    if (cell.firstChild.classList.contains('red')) {
 
-        document.querySelector('.animals').style.display = 'none';
+        document.querySelector('.selection').style.display = 'none';
         document.querySelector('.eraser').style.display = 'flex';
 
         setTimeout(() => {
@@ -505,10 +544,10 @@ const select = (e) => {
     }
 
     document.querySelector('.eraser').style.display = 'none';
-    document.querySelector('.animals').style.display = 'flex';
+    document.querySelector('.selection').style.display = 'flex';
 
     setTimeout(() => {
-        document.querySelector('.animals').classList.add('display');   
+        document.querySelector('.selection').classList.add('display');   
         // enableAnimals();             
     }, 0);
 }
@@ -516,7 +555,12 @@ const select = (e) => {
 
 const selectAnimal = (e) => {
 
-    let animal = parseInt(e.currentTarget.innerText);
+    // let animal = parseInt(e.currentTarget.innerText);
+
+    let animal = e.currentTarget.id.substring(1);
+
+    // console.log(animal);
+
     let cells = document.querySelectorAll('.cell');
 
     for (let cell of cells) {
@@ -526,20 +570,23 @@ const selectAnimal = (e) => {
 
             cell.classList.remove('gray');
 
-            cell.dataset.val == animal ? cell.classList.add('filled') : cell.classList.add('red'); 
-            cell.firstChild.innerText = animal;
+            cell.dataset.val == animal ? cell.firstChild.classList.add('filled') : cell.firstChild.classList.add('red'); 
+            cell.firstChild.src = `images/zoo/${clues[animal - 1]}.svg`;
             if (cell.dataset.val == animal) board[row][col] = animal;
 
         }
 
-        document.querySelector('.animals').classList.remove('display');
+        document.querySelector('.selection').classList.remove('display');
         // disableAnimals();
 
     }
 
-    if (solved(board)) setTimeout(firework, 500);
+    if (solved(board)) {
+        disableTouch();
+        setTimeout(firework, 500);
+    }
 
-    console.log(animal);
+    // console.log(animal);
 }
 
 const reset = () => {
@@ -547,31 +594,46 @@ const reset = () => {
     document.querySelector('.board').removeEventListener('touchstart', reset);
     document.querySelector('.board').removeEventListener('mousedown', reset);
 
+    document.querySelectorAll(".cell .animal").forEach((animal) => {
+        animal.classList.add('reset'); 
+    });
+
     document.querySelectorAll('.cell').forEach(cell => {
-        cell.classList.remove('filled');
+        cell.firstChild.classList.remove('filled');
         cell.firstChild.classList.remove('pop');
     });
 
-    initBoard();    
-    fill();
-    save(); 
-    remove();
-    fillBoard();
+    setTimeout(() => {
+        initBoard(); 
+        setClues();  
+        fill();
+        save(); 
+        remove();
+        fillBoard();
+    }, 600);
+
+    setTimeout(() => {
+        document.querySelectorAll(".cell .animal").forEach((animal) => {
+            animal.classList.remove('reset'); 
+            enableTouch();
+        });
+    }, 1100);
+
 }
 
 const firework = () => {
 
-    console.log('FIREWORK');
+    // console.log('FIREWORK');
 
     let n = 0;
 
     let cells = document.querySelectorAll('.cell');
-    let order = Array.from({length: 81}, (_, i) => i);
+    let order = Array.from({length: 16}, (_, i) => i);
     order = shuffle(order);
     // console.log(cells);
 
     const pop = () => {
-        if (n > 80){
+        if (n > 15){
             document.querySelector('.board').addEventListener('touchstart', reset);
             document.querySelector('.board').addEventListener('mousedown', reset);
             clearInterval(popInterval);
@@ -581,11 +643,11 @@ const firework = () => {
         }
     }
 
-    let  popInterval = setInterval(pop, 100);
+    let  popInterval = setInterval(pop, 300);
 
 }
 
-const eraser = (e) => {
+const erase = (e) => {
 
     let cells = document.querySelectorAll('.cell');
 
@@ -594,8 +656,9 @@ const eraser = (e) => {
 
             let [row, col] = cellCoords(cell);
 
-            cell.classList.remove('gray','red');
-            cell.firstChild.innerText = '';
+            cell.classList.remove('gray');
+            cell.firstChild.classList.remove('red');
+            // cell.firstChild.innerText = '';
             board[row][col] = 0;
         }
 
@@ -608,7 +671,7 @@ const eraser = (e) => {
 
 const enableSelection = () => {
 
-    let animals = document.querySelectorAll('.animal');
+    let animals = document.querySelectorAll('.selection .animal');
 
     for (let animal of animals){
         if (touchScreen()){
@@ -634,23 +697,23 @@ const enableSelection = () => {
 
 const enableEraser = () => {
 
-    let x = document.querySelector('.x');
+    let x = document.querySelector('.wastebasket');
 
         if (touchScreen()){
-            x.addEventListener("touchstart", eraser);
+            x.addEventListener("touchstart", erase);
         } else {
-            x.addEventListener("mousedown", eraser);
+            x.addEventListener("mousedown", erase);
         }
 }
 
 // const disableEraser = () => {
 
-//     let x = document.querySelector('.x');
+//     let x = document.querySelector('.wastebasket');
 
 //         if (touchScreen()){
-//             x.removeEventListener("touchstart", eraser);
+//             x.removeEventListener("touchstart", erase);
 //         } else {
-//             x.removeEventListener("mousedown", eraser);
+//             x.removeEventListener("mousedown", erase);
 //         }
 // }
 
@@ -667,24 +730,27 @@ const enableTouch = () => {
     }
 }
 
-// const disableTouch = () => {
+const disableTouch = () => {
 
-//     let cells = document.querySelectorAll('.cell');
+    // console.log('DISABLE');
 
-//     for (let cell of cells){
-//         if (touchScreen()){
-//             cell.removeEventListener("touchstart", select);
-//         } else {
-//             cell.removeEventListener("mousedown", select);
-//         }
-//     }
-// }
+    let cells = document.querySelectorAll('.cell');
+
+    for (let cell of cells){
+        if (touchScreen()){
+            cell.removeEventListener("touchstart", select);
+        } else {
+            cell.removeEventListener("mousedown", select);
+        }
+    }
+}
 
 const init = () => {
 
     disableTapZoom();
     setBoardSize();
     initBoard();
+    setClues();  
     
     let t0 = performance.now();
 
@@ -702,13 +768,18 @@ const init = () => {
 
     showBoard();
 
+    // if (solved(board)) setTimeout(() => {
+    //     disableTouch();
+    //     firework();
+    // }, 1500);
+
     enableTouch();
     enableSelection();
     enableEraser();
 
     solvable(board, true);
 
-    console.table(board);
+    // console.table(board);
 
     console.log(t1 - t0);
     console.log(t2 - t1);
