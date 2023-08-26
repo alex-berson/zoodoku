@@ -1,25 +1,55 @@
 <!doctype html>
 <html lang="en" translate="no">
-    <html lang="en" translate="no">
-        <head>
-            <title>Zoodoku</title>
-            <meta charset="UTF-8">
-            <meta name="description" content="">
-            <meta name="keywords" content="">
-            <meta name="author" content="Alexander Berson">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-            <meta http-equiv="X-UA-Compatible" content="ie=edge">
-            <meta name="google" content="notranslate">
-        
-            <link rel="stylesheet" type="text/css" href="css/style.css">
-            <script src="js/zoodoku.js" defer></script>
-        </head>
-<body class="noselect">
+<head>
+    <title>Zoodoku</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="Fill in the grid so that every animal appears only once in each row, column and region.">
+    <meta name="keywords" content="animal,sudoku,puzzle,game,play,online,logic,brain,mind,challenge,school,kids,family">
+    <meta name="author" content="Alexander Berson">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <!-- <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="google" content="notranslate">
+    <meta name="apple-itunes-app" content="app-id=6450438410">
+    <meta name="apple-itunes-app" content="app-id=1234793120">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Zoodoku">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#5bbad5">  
+    <link rel="manifest" href="manifest.json"> -->
+
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="js/zoodoku.js" defer></script>
+    <!-- <script src="js/preview.js" defer></script> -->
+</head>
+<body>
+    <svg class="filter" width="0" height="0">
+        <defs>
+          <filter id="round-corners">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="1"/>
+            <feColorMatrix mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 7 -3"/>
+          </filter>
+        </defs>
+    </svg>
+    <svg class="filter" width="0" height="0">
+        <defs>
+          <filter id="round-corners-big">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="1"/>
+            <feColorMatrix mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 15 -7"/>
+          </filter>
+        </defs>
+    </svg>
     <div id="outer">
         <div id="middle">
             <div id ="inner">
                 <header>
-                    <h1>
+                    <h1 class="rounded-corners">
                         <span>Zoodoku</span>
                     </h1>
                 </header>

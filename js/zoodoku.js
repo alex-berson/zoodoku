@@ -1,13 +1,7 @@
 let board, clues;
 let animals = ['bear','boar','cat','cow','dog','fox','frog','hamster','koala','lion','monkey','mouse','panda','pig','polar-bear','rabbit','raccoon','tiger','wolf'];
 
-const initBoard = () => {
-
-    board = [[0,0,0,0],
-             [0,0,0,0],
-             [0,0,0,0],
-             [0,0,0,0]];    
-}
+const initBoard = () => board = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];    
 
 const showBoard = () => document.body.style.opacity = 1;
 
@@ -34,6 +28,35 @@ const shuffle = (array) => {
 
     return array;
 }
+
+const setTitle = () => {
+
+    let title = document.querySelector('h1');
+    let ua = navigator.userAgent;
+    let safari = /Safari/.test(ua) && !/Chrome/.test(ua);
+    let safariVer = safari ? ua.match(/Version\/([\d.]+)/)[1].split('.').map(Number) : null;
+
+    // if (safari && safariVer[0] < 14) title.style.filter = 'none';
+
+    if (safari && safariVer[0] < 14) title.classList.remove('rounded-corners');
+    if (document.URL.startsWith('http://') || document.URL.startsWith('https://')) return;
+
+    if (/(iPhone|iPod|iPad)/.test(ua)) {
+
+        let osVer = ua.match(/OS ([\d_]+)/)[1].split('_').map(Number);
+        
+        // if (osVer[0] < 14) title.style.filter = 'none';
+        if (osVer[0] < 14) title.classList.remove('rounded-corners');
+
+        return;
+    }
+
+    let osVer = [...ua.match(/Mac OS X ([\d_]+)/)[1].split('_').map(Number), 0, 0, 0];
+
+    // if (osVer[0] == 10 && osVer[1] == 15 && osVer[2] <= 4) title.style.filter = 'none';
+    if (osVer[0] == 10 && osVer[1] == 15 && osVer[2] <= 4) title.classList.remove('rounded-corners');
+}
+
 
 const setBoardSize = () => {
 
@@ -97,7 +120,6 @@ const checkRegs = (board) => {
                 let col = boxCol + cell % 2;
 
                 if (board[row][col] != 0 || !validAnimal(board, row, col, val)) continue;
-
                 if (r != undefined) continue valLoop;
 
                 [r, c] = [row, col];
@@ -114,7 +136,7 @@ const findAnimal = (board) => {
 
     let row, col, val;
 
-    [row, col, val, num] = checkRegs(board);
+    [row, col, val] = checkRegs(board);
 
     if (row != null) return [row, col, val];
 
@@ -208,7 +230,7 @@ const saveSolution = () => {
 const fillBoard = () => {
 
     let board1D = board.flat();
-    let cells = document.querySelectorAll('.cell')
+    let cells = document.querySelectorAll('.cell');
     
     for (let cell of cells) {
 
@@ -307,7 +329,7 @@ const selectAnimal = (e) => {
     }
 }
 
-const newGame = () => {
+const resetBoard = () => {
 
     let event = touchScreen() ? 'touchstart' : 'mousedown';
 
@@ -327,6 +349,11 @@ const newGame = () => {
 
         }, {once: true});
     });
+}
+
+const newGame = () => {
+
+    resetBoard();
 
     setTimeout(() => {
         initBoard(); 
@@ -334,6 +361,9 @@ const newGame = () => {
         generatePuzzle();
         saveSolution(); 
         fillBoard();
+
+        // screenShot1(); //
+
     }, 600);
 
     setTimeout(enableTouch, 1100);
@@ -342,21 +372,12 @@ const newGame = () => {
 const firework = () => {
 
     let n = 0;
-
     let cells = document.querySelectorAll('.cell');
     let order = Array.from({length: 16}, (_, i) => i);
+
     order = shuffle(order);
 
     const zoom = () => {
-
-        if (n > 15) {
-
-            let event = touchScreen() ? 'touchstart' : 'mousedown';
-
-            document.querySelector('.board').addEventListener(event, newGame);
-            clearInterval(zoomInterval);
-            return;
-        }
 
         cells[order[n]].classList.add('zoom');
 
@@ -367,8 +388,18 @@ const firework = () => {
             img.parentElement.classList.remove('zoom'); 
 
         }, {once: true});
+        
+        if (n >= 15) {
 
-        n++;    
+            let event = touchScreen() ? 'touchstart' : 'mousedown';
+
+            clearInterval(zoomInterval);
+            setTimeout(() => document.querySelector('.board').addEventListener(event, newGame), 500);
+
+            // previewEnd(); //
+        }
+
+        n++;  
     }
 
     let  zoomInterval = setInterval(zoom, 300);
@@ -406,19 +437,30 @@ const disableTapZoom = () => {
     document.body.addEventListener(event, preventDefault, {passive: false});
 }
 
+// const registerServiceWorker = () => {
+//     if ('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js');
+// }
+
 const init = () => {
 
+    // registerServiceWorker();
     disableTapZoom();
+    setTitle();
     setBoardSize();
     initBoard();
     setClues();
     generatePuzzle();
-    saveSolution(); 
+    saveSolution();
     fillBoard();
     showBoard();
     enableTouch();
     enableSelection();
     preloadImages();  
+
+    // screenShot1(); //
+
+    // setTimeout(preview2, 0); //
+
 }
 
 window.onload = () => document.fonts.ready.then(setTimeout(init, 0));
