@@ -18,8 +18,6 @@
     --color4: #b7c3c8;
     --color5: #6c7981;
     --color6: #e3bd9b;
-    /* --color7: #9b6f4f; */
-    /* --color8: #89c131; */
 }
 
 body {
@@ -28,7 +26,6 @@ body {
     cursor: default;
     margin: 0;
     opacity: 0;
-    /* opacity: 1; */
 }
 
 #outer {
@@ -59,11 +56,6 @@ h1 {
     font-size: calc(var(--board-size) / 3.65);
     margin-top: -10px;
     margin-bottom: 8px;
-
-    /* margin-top: 10px; */
-    /* margin-bottom: 0px; */
-
-    /* filter: url(#rounded-corners); */
 }
 
 .rounded-corners {
@@ -159,7 +151,6 @@ span {
 
 .clue img, .reset img {
     transition: opacity 0.5s ease-in-out;
-    /* transition: opacity 0.0s ease-in-out; */
 }
 
 .gray {
@@ -172,7 +163,6 @@ span {
     color: white;
     font-size: 9.2px; 
     margin-top: -12px;
-    /* margin-top: -10px; */
 }
 
 @keyframes incorrect {
@@ -259,7 +249,6 @@ span {
 
     h1 {
         font-size: 112px;
-        /* filter: url(#rounded-corners-big); */
     }
 
     .rounded-corners {
@@ -303,6 +292,5 @@ span {
     #designed {
         font-size: 12.8px; 
         margin-top: -17px;
-        /* margin-top: -14px; */
     }
 }

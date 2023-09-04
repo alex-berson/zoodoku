@@ -7,16 +7,6 @@ const showBoard = () => document.body.style.opacity = 1;
 
 const touchScreen = () => matchMedia('(hover: none)').matches;
 
-const preloadImages = () => {
-
-    animals.forEach(animal => {
-
-        let img = new Image();
-
-        img.src = `images/animals/${animal}.svg`;
-    });
-}
-
 const shuffle = (array) => {
 
     for (let i = array.length - 1; i > 0; i--) {
@@ -34,29 +24,38 @@ const setTitle = () => {
     let title = document.querySelector('h1');
     let ua = navigator.userAgent;
     let safari = /Safari/.test(ua) && !/Chrome/.test(ua);
-    let safariVer = safari ? ua.match(/Version\/([\d.]+)/)[1].split('.').map(Number) : null;
 
-    // if (safari && safariVer[0] < 14) title.style.filter = 'none';
+    try {
 
-    if (safari && safariVer[0] < 14) title.classList.remove('rounded-corners');
+        let safariVer = safari ? ua.match(/Version\/([\d.]+)/)[1].split('.').map(Number) : null;
+
+        if (safari && safariVer[0] < 14) title.classList.remove('rounded-corners');
+
+    } catch(e) {}
+
     if (document.URL.startsWith('http://') || document.URL.startsWith('https://')) return;
 
     if (/(iPhone|iPod|iPad)/.test(ua)) {
 
-        let osVer = ua.match(/OS ([\d_]+)/)[1].split('_').map(Number);
+        try {
+
+            let osVer = ua.match(/OS ([\d_]+)/)[1].split('_').map(Number);
         
-        // if (osVer[0] < 14) title.style.filter = 'none';
-        if (osVer[0] < 14) title.classList.remove('rounded-corners');
+            if (osVer[0] < 14) title.classList.remove('rounded-corners');
+
+        } catch(e) {}
 
         return;
     }
 
-    let osVer = [...ua.match(/Mac OS X ([\d_]+)/)[1].split('_').map(Number), 0, 0, 0];
+    try {
 
-    // if (osVer[0] == 10 && osVer[1] == 15 && osVer[2] <= 4) title.style.filter = 'none';
-    if (osVer[0] == 10 && osVer[1] == 15 && osVer[2] <= 4) title.classList.remove('rounded-corners');
+        let osVer = [...ua.match(/Mac OS X ([\d_]+)/)[1].split('_').map(Number), 0, 0, 0];
+
+        if (osVer[0] == 10 && osVer[1] == 15 && osVer[2] <= 4) title.classList.remove('rounded-corners');
+        
+    } catch(e) {}    
 }
-
 
 const setBoardSize = () => {
 
@@ -181,6 +180,7 @@ const generatePuzzle = () => {
 
         let cells = Array.from({length: 16}, (_, i) => i);
         let clues = [1,2,3,4];
+
         tempBoard = board.map(arr => arr.slice());
 
         shuffle(cells);
@@ -243,15 +243,6 @@ const fillBoard = () => {
     }
 }
 
-const cellCoords = (touchedCell) => {
-
-    let cells = document.querySelectorAll('.cell');
-
-    for (let [i, cell] of cells.entries()) {
-        if (cell == touchedCell) return [Math.trunc(i / 4), i % 4];
-    }
-}
-
 const selectCell = (e) => {
 
     let cell = e.currentTarget;
@@ -284,6 +275,15 @@ const selectCell = (e) => {
     setTimeout(() => {
         document.querySelector('.selection').classList.add('display');   
     }, 0);
+}
+
+const cellCoords = (touchedCell) => {
+
+    let cells = document.querySelectorAll('.cell');
+
+    for (let [i, cell] of cells.entries()) {
+        if (cell == touchedCell) return [Math.trunc(i / 4), i % 4];
+    }
 }
 
 const selectAnimal = (e) => {
@@ -362,8 +362,6 @@ const newGame = () => {
         saveSolution(); 
         fillBoard();
 
-        // screenShot1(); //
-
     }, 600);
 
     setTimeout(enableTouch, 1100);
@@ -395,14 +393,22 @@ const firework = () => {
 
             clearInterval(zoomInterval);
             setTimeout(() => document.querySelector('.board').addEventListener(event, newGame), 500);
-
-            // previewEnd(); //
         }
 
         n++;  
     }
 
     let  zoomInterval = setInterval(zoom, 300);
+}
+
+const preloadImages = () => {
+
+    animals.forEach(animal => {
+
+        let img = new Image();
+
+        img.src = `images/animals/${animal}.svg`;
+    });
 }
 
 const enableTouch = () => {
@@ -437,13 +443,13 @@ const disableTapZoom = () => {
     document.body.addEventListener(event, preventDefault, {passive: false});
 }
 
-// const registerServiceWorker = () => {
-//     if ('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js');
-// }
+const registerServiceWorker = () => {
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js');
+}
 
 const init = () => {
 
-    // registerServiceWorker();
+    registerServiceWorker();
     disableTapZoom();
     setTitle();
     setBoardSize();
@@ -456,11 +462,6 @@ const init = () => {
     enableTouch();
     enableSelection();
     preloadImages();  
-
-    // screenShot1(); //
-
-    // setTimeout(preview2, 0); //
-
 }
 
-window.onload = () => document.fonts.ready.then(setTimeout(init, 0));
+window.onload = () => document.fonts.ready.then(() => setTimeout(init, 0));
