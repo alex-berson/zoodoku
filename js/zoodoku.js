@@ -1,12 +1,11 @@
+let size = 4;
 let board, clues;
 let animals = ['bear','boar','cat','cow','dog','fox','frog','hamster','koala','lion','monkey','mouse','panda','pig','polar-bear','rabbit','raccoon','tiger','wolf'];
 
 const initBoard = () => board = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];    
 
 const showBoard = () => document.body.style.opacity = 1;
-
-const touchScreen = () => matchMedia('(hover: none)').matches;
-
+                          
 const shuffle = (array) => {
 
     for (let i = array.length - 1; i > 0; i--) {
@@ -19,56 +18,18 @@ const shuffle = (array) => {
     return array;
 }
 
-const setTitle = () => {
-
-    let title = document.querySelector('h1');
-    let ua = navigator.userAgent;
-    let safari = /Safari/.test(ua) && !/Chrome/.test(ua);
-
-    try {
-
-        let safariVer = safari ? ua.match(/Version\/([\d.]+)/)[1].split('.').map(Number) : null;
-
-        if (safari && safariVer[0] < 14) title.classList.remove('rounded-corners');
-
-    } catch(e) {}
-
-    if (document.URL.startsWith('http://') || document.URL.startsWith('https://')) return;
-
-    if (/(iPhone|iPod|iPad)/.test(ua)) {
-
-        try {
-
-            let osVer = ua.match(/OS ([\d_]+)/)[1].split('_').map(Number);
-        
-            if (osVer[0] < 14) title.classList.remove('rounded-corners');
-
-        } catch(e) {}
-
-        return;
-    }
-
-    try {
-
-        let osVer = [...ua.match(/Mac OS X ([\d_]+)/)[1].split('_').map(Number), 0, 0, 0];
-
-        if (osVer[0] == 10 && osVer[1] == 15 && osVer[2] <= 4) title.classList.remove('rounded-corners');
-        
-    } catch(e) {}    
-}
-
 const setBoardSize = () => {
 
     let minSide = screen.height > screen.width ? screen.width : window.innerHeight;
-    let cssBoardSize = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--board-size'));
-    let boardSize = Math.ceil(minSide * cssBoardSize / 4) * 4;
+    let cssBoardSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--board-size')) / 100;
+    let boardSize = Math.ceil(minSide * cssBoardSize / size) * size;
 
     document.documentElement.style.setProperty('--board-size', boardSize + 'px');
 }
 
 const setClues = () => {
 
-    clues = shuffle(animals).slice(0, 4);
+    clues = shuffle(animals).slice(0, size);
 
     document.querySelectorAll('.selection .animal').forEach((animal, i) => {
         animal.src = `images/animals/${clues[i]}.svg`;
@@ -77,8 +38,8 @@ const setClues = () => {
 
 const puzzleSolved = (board) => {
 
-    for (let row = 0; row < 4; row++) {
-        for (let col = 0; col < 4; col++) {
+    for (let row = 0; row < size; row++) {
+        for (let col = 0; col < size; col++) {
             if (board[row][col] == 0) return false;
         }
     }
@@ -91,7 +52,7 @@ const validAnimal = (board, row, col, val) => {
     let boxRow = Math.trunc(row / 2) * 2;
     let boxCol = Math.trunc(col / 2) * 2;
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < size; i++) {
 
         if (board[row][i] == val || board[i][col] == val) return false;
 
@@ -106,14 +67,14 @@ const validAnimal = (board, row, col, val) => {
 
 const checkRegs = (board) => {
 
-    for (let reg = 0; reg < 4; reg++) {
-        valLoop: for (let val = 1; val <= 4; val++) {
+    for (let reg = 0; reg < size; reg++) {
+        valLoop: for (let val = 1; val <= size; val++) {
 
             let r, c; 
             let boxRow = Math.trunc(reg / 2) * 2;
             let boxCol = reg % 2 * 2;
 
-            for (let cell = 0; cell < 4; cell++) {
+            for (let cell = 0; cell < size; cell++) {
 
                 let row = boxRow + Math.trunc(cell / 2);
                 let col = boxCol + cell % 2;
@@ -146,8 +107,8 @@ const countFilled = (board) => {
 
     let n = 0;
 
-    for (let row = 0; row < 4; row++) {
-        for (let col = 0; col < 4; col++) {
+    for (let row = 0; row < size; row++) {
+        for (let col = 0; col < size; col++) {
             if (board[row][col] != 0) n++;
         }
     }
@@ -178,7 +139,7 @@ const generatePuzzle = () => {
 
     do {
 
-        let cells = Array.from({length: 16}, (_, i) => i);
+        let cells = Array.from({length: size ** 2}, (_, i) => i);
         let clues = [1,2,3,4];
 
         tempBoard = board.map(arr => arr.slice());
@@ -188,7 +149,7 @@ const generatePuzzle = () => {
         for (let clue of clues) {
             for (let cell of cells) {
 
-                let [row, col] = [Math.trunc(cell / 4), cell % 4];
+                let [row, col] = [Math.trunc(cell / size), cell % size];
 
                 if (tempBoard[row][col] != 0) continue;
 
@@ -199,7 +160,7 @@ const generatePuzzle = () => {
             }
         }
 
-    } while (!puzzleSolvable(tempBoard) || countFilled(tempBoard) != 4);
+    } while (!puzzleSolvable(tempBoard) || countFilled(tempBoard) != size);
 
     board = tempBoard;
 }
@@ -220,9 +181,9 @@ const saveSolution = () => {
 
     let cells = document.querySelectorAll('.cell');
 
-    for (let row = 0; row < 4; row++) {
-        for (let col = 0; col < 4; col++) {
-            cells[row * 4 + col].dataset.val = tempBoard[row][col];
+    for (let row = 0; row < size; row++) {
+        for (let col = 0; col < size; col++) {
+            cells[row * size + col].dataset.val = tempBoard[row][col];
         }
     }
 }
@@ -282,7 +243,7 @@ const cellCoords = (touchedCell) => {
     let cells = document.querySelectorAll('.cell');
 
     for (let [i, cell] of cells.entries()) {
-        if (cell == touchedCell) return [Math.trunc(i / 4), i % 4];
+        if (cell == touchedCell) return [Math.trunc(i / size), i % size];
     }
 }
 
@@ -331,9 +292,8 @@ const selectAnimal = (e) => {
 
 const resetBoard = () => {
 
-    let event = touchScreen() ? 'touchstart' : 'mousedown';
-
-    document.querySelector('.board').removeEventListener(event, newGame);
+    document.querySelector('.board').removeEventListener('touchstart', newGame);
+    document.querySelector('.board').removeEventListener('mousedown', newGame);
 
     document.querySelectorAll('.cell').forEach(cell => {
 
@@ -361,7 +321,6 @@ const newGame = () => {
         generatePuzzle();
         saveSolution(); 
         fillBoard();
-
     }, 600);
 
     setTimeout(enableTouch, 1100);
@@ -371,7 +330,7 @@ const firework = () => {
 
     let n = 0;
     let cells = document.querySelectorAll('.cell');
-    let order = Array.from({length: 16}, (_, i) => i);
+    let order = Array.from({length: size ** 2}, (_, i) => i);
 
     order = shuffle(order);
 
@@ -387,12 +346,14 @@ const firework = () => {
 
         }, {once: true});
         
-        if (n >= 15) {
-
-            let event = touchScreen() ? 'touchstart' : 'mousedown';
+        if (n >= size ** 2 - 1) {
 
             clearInterval(zoomInterval);
-            setTimeout(() => document.querySelector('.board').addEventListener(event, newGame), 500);
+
+            setTimeout(() => {
+                document.querySelector('.board').addEventListener('touchstart', newGame);
+                document.querySelector('.board').addEventListener('mousedown', newGame);
+            }, 500);
         }
 
         n++;  
@@ -414,33 +375,39 @@ const preloadImages = () => {
 const enableTouch = () => {
 
     let cells = document.querySelectorAll('.cell');
-    let event = touchScreen() ? 'touchstart' : 'mousedown';
 
-    cells.forEach(cell => cell.addEventListener(event, selectCell));
+    cells.forEach(cell => {
+        cell.addEventListener('touchstart', selectCell);
+        cell.addEventListener('mousedown', selectCell);
+    });
 }
 
 const disableTouch = () => {
 
     let cells = document.querySelectorAll('.cell');
-    let event = touchScreen() ? 'touchstart' : 'mousedown';
 
-    cells.forEach(cell => cell.removeEventListener(event, selectCell));
+    cells.forEach(cell => {
+        cell.removeEventListener('touchstart', selectCell);
+        cell.removeEventListener('mousedown', selectCell);
+    });
 }
 
 const enableSelection = () => {
 
     let buttons = document.querySelectorAll('.button');
-    let event = touchScreen() ? 'touchstart' : 'mousedown';
 
-    buttons.forEach(button => button.addEventListener(event, selectAnimal));
+    buttons.forEach(button => {
+        button.addEventListener('touchstart', selectAnimal);
+        button.addEventListener('mousedown', selectAnimal);
+    });
 }
 
 const disableTapZoom = () => {
 
     const preventDefault = (e) => e.preventDefault();
-    const event = touchScreen() ? 'touchstart' : 'mousedown';
 
-    document.body.addEventListener(event, preventDefault, {passive: false});
+    document.body.addEventListener('touchstart', preventDefault, {passive: false});
+    document.body.addEventListener('mousedown', preventDefault, {passive: false});
 }
 
 const registerServiceWorker = () => {
@@ -451,7 +418,6 @@ const init = () => {
 
     registerServiceWorker();
     disableTapZoom();
-    setTitle();
     setBoardSize();
     initBoard();
     setClues();
@@ -464,4 +430,4 @@ const init = () => {
     preloadImages();  
 }
 
-window.onload = () => document.fonts.ready.then(() => setTimeout(init, 0));
+window.onload = () => document.fonts.ready.then(init);
